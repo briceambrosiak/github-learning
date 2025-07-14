@@ -7,6 +7,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  job0:
+    # Dump context information (using toJson)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump context information
+        run: |
+          echo "Dumping context information:"
+          echo "${{ toJson(github) }}"
+          echo "${{ toJson(inputs) }}"
+          echo "${{ toJson(secrets) }}"
+          echo "${{ toJson(env) }}"
+          echo "${{ toJson(job) }}"
+          echo "${{ toJson(steps) }}"
+
   job1:
     runs-on: ubuntu-latest
     # Map a step output to a job output
@@ -41,6 +55,7 @@ jobs:
           echo "::notice::This is a notice Message"
           echo "::warning::This is a warning Message"
           echo "::error::This is an error Message"
+          echo "::add-support-message::This is a support message"
       - id: sets-a-secret
         name: Generate, mask, and output a secret
         run: |
