@@ -22,6 +22,16 @@ jobs:
           distribution: 'temurin'
           java-version: '22'
 
+      - name: 🎨 Show workflow header
+        run: |
+          echo "🖼️ Welcome to the Fancy Maven Build!"
+          echo "🧰 Setting up tools..."
+          echo "::group::🎯 Build Context"
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "::endgroup::"
+
       - name: Build with Maven
         run: |
           cd training
@@ -32,3 +42,18 @@ jobs:
         with:
           path: ./training/target/*.jar
           name: ptl-github-training-jar
+
+      - name: 📊 Create build summary
+        if: ${{ steps.build.outcome == 'success' }}
+        run: |
+          echo "## ✅ Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Maven Build | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact | 📦 Uploaded |" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🧙‍♂️ Wisdom of the day
+        if: ${{ steps.build.outcome == 'success' }}
+        run: |
+          curl -s https://api.quotable.io/random | jq -r '"💡 \"" + .content + "\" — " + .author'
+
