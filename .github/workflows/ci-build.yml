@@ -13,6 +13,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: 🔧 Configure Maven for GitHub Packages
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOL
+          <settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${{ github.actor }}</username>
+                <password>${{ secrets.PERSONAL_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>
+          EOL
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -43,8 +58,12 @@ jobs:
           path: ./training/target/*.jar
           name: ptl-github-training-jar
 
+      - name: 🚀 Deploy to GitHub Packages
+        working-directory: training
+        run: mvn deploy --batch-mode
+
       - name: 📊 Create build summary
-        if: ${{ steps.build.outcome == 'success' }}
+        if: ${{ success() }}
         run: |
           echo "## ✅ Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
@@ -53,7 +72,7 @@ jobs:
           echo "| Artifact | 📦 Uploaded |" >> $GITHUB_STEP_SUMMARY
 
       - name: 🧙‍♂️ Wisdom of the day
-        if: ${{ steps.build.outcome == 'success' }}
+        if: ${{ success() }}
         run: |
           curl -s https://api.quotable.io/random | jq -r '"💡 \"" + .content + "\" — " + .author'
 
