@@ -20,3 +20,66 @@ jobs:
           body: |
             🎉 Thanks @${{ github.event.issue.user.login }} for opening this issue!
             We appreciate your input and will take a look soon. 🚀
+
+      - name: Roll a dice, comment, close, and label issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PERSONAL_TOKEN }}
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const issueAuthor = context.payload.issue.user.login;
+            const diceRoll = Math.floor(Math.random() * 6) + 1;
+            console.log(`🎲 Rolled a ${diceRoll}`);
+            
+            const baseParams = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            };
+            
+            let message;
+            let labels = [];
+            
+            switch (diceRoll) {
+              case 1:
+                console.log("💥 Rolled a 1! Closing the issue...");
+                await github.rest.issues.update({
+                  ...baseParams,
+                  state: "closed"
+                });
+                message = "😵 Rolled a 1... Issue closed by the dice gods. Better luck next time!";
+                labels = ["luck:fail"];
+                break;
+              case 2:
+                message = "🦄 Rolled a 2... A unicorn noticed your issue. It may grant attention soon.";
+                labels = ["luck:neutral"];
+                break;
+              case 3:
+                message = "⏳ Rolled a 3... Your issue was placed in the ancient queue of contemplation.";
+                labels = ["luck:neutral"];
+                break;
+              case 4:
+                message = "🕵️ Rolled a 4... A secret agent has been assigned to investigate your issue.";
+                labels = ["luck:neutral"];
+                break;
+              case 5:
+                message = "🧙 Rolled a 5... A wise old developer is meditating on your request.";
+                labels = ["luck:neutral"];
+                break;
+              case 6:
+                message = `💰 Rolled a 6... @${issueAuthor}, you win **$1000**! (Not really, but imagine it 😉)`;
+                labels = ["luck:jackpot"];
+                break;
+            }
+            
+            // Add labels to the issue
+            await github.rest.issues.addLabels({
+              ...baseParams,
+              labels
+            });
+            
+            // Post the comment
+            await github.rest.issues.createComment({
+              ...baseParams,
+              body: message
+            });
