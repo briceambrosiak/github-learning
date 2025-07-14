@@ -6,9 +6,6 @@ name: Workflow Commands
 on:
   workflow_dispatch:
 
-env:
-  ACTIONS_STEP_DEBUG: true # Enable debug logging for all steps
-
 jobs:
   job1:
     runs-on: ubuntu-latest
