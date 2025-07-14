@@ -15,6 +15,11 @@
   </properties>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/briceambrosiak/github-learning</url>
+    </snapshotRepository>
     <repository>
       <id>github</id>
       <name>GitHub Packages</name>
