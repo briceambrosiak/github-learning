@@ -16,13 +16,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+#      - name: Set up JDK
+#        uses: actions/setup-java@v4
+#        with:
+#          distribution: 'temurin'
+#          java-version: '22'
+
       # Build maven
       - name: Build with Maven
         run: mvn clean install
 
-      # Upload the built artifact
-      - name: Upload JAR file
-        uses: actions/upload-artifact@v3
-        with:
-          path: ./target/*.jar
-          name: ptl-github-training-jar
+#      # Upload the built artifact
+#      - name: Upload JAR file
+#        uses: actions/upload-artifact@v3
+#        with:
+#          path: ./target/*.jar
+#          name: ptl-github-training-jar
